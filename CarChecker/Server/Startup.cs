@@ -36,14 +36,21 @@ namespace CarChecker.Server
             services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
 
+
+
             services.AddIdentityServer()
-                .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+                .AddApiAuthorization<ApplicationUser, ApplicationDbContext>(options => {
+                    options.IdentityResources["profile"].UserClaims.Add("firstname");
+                    options.IdentityResources["profile"].UserClaims.Add("lastname");
+                });
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
 
             services.AddControllersWithViews();
             services.AddRazorPages();
+        
+            services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, ApplicationUsersClaimsPrincipalFactory>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
